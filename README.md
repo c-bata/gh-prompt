@@ -63,15 +63,15 @@ sudo mv ./gh-prompt /usr/local/bin/gh-prompt
 Hopefully support following commands enough.
 
 * [ ] issue
-    * [ ] create
-    * [ ] list
-    * [ ] status
+    * [x] create
+    * [x] list
+    * [x] status
     * [ ] view
 * [ ] pr
-    * [ ] checkout
-    * [ ] create
-    * [ ] list
-    * [ ] status
+    * [x] checkout
+    * [x] create
+    * [x] list
+    * [x] status
     * [ ] view
 
 ## LICENSE
