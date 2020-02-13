@@ -45,9 +45,14 @@ func main() {
 	debug.Log("gh-prompt started")
 	defer debug.Teardown()
 
+	c, err := completer.NewCompleter(Version)
+	if err != nil {
+		_, _ = fmt.Fprintln(os.Stderr, "Please use `exit` or `Ctrl-D` to exit this program.")
+		os.Exit(1)
+	}
 	p := prompt.New(
 		executorFunc,
-		completer.Completer,
+		c.Complete,
 		prompt.OptionTitle("gh-prompt: interactive GitHub CLI"),
 		prompt.OptionPrefix(">>> "),
 		prompt.OptionInputTextColor(prompt.Yellow),

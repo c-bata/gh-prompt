@@ -1,25 +1,75 @@
 package completer
 
 import (
+	"fmt"
+	"net/url"
 	"strings"
 
 	"github.com/c-bata/go-prompt"
+	"github.com/cli/cli/api"
+	"github.com/cli/cli/context"
+	"github.com/cli/cli/git"
 )
 
-func parseArgs(t string) []string {
-	splits := strings.Split(t, " ")
-	args := make([]string, 0, len(splits))
-
-	for i := range splits {
-		if i != len(splits)-1 && splits[i] == "" {
-			continue
-		}
-		args = append(args, splits[i])
-	}
-	return args
+type Completer struct {
+	client  *api.Client
+	remotes context.Remotes
+	repo    *api.Repository
 }
 
-func Completer(d prompt.Document) []prompt.Suggest {
+func fromURL(u *url.URL) (owner, repo string, err error) {
+	parts := strings.SplitN(strings.TrimPrefix(u.Path, "/"), "/", 3)
+	if len(parts) < 2 {
+		return "", "", fmt.Errorf("invalid path: %s", u.Path)
+	}
+	return parts[0], strings.TrimSuffix(parts[1], ".git"), nil
+}
+
+func NewCompleter(version string) (*Completer, error) {
+	client, err := BasicClient(fmt.Sprintf("gh-prompt %s", version))
+	if err != nil {
+		return nil, err
+	}
+
+	gitRemotes, err := git.Remotes()
+	if err != nil {
+		return nil, err
+	}
+	remotes := make(context.Remotes, 0, len(gitRemotes))
+	sshTranslate := git.ParseSSHConfig().Translator()
+	for _, r := range gitRemotes {
+		var owner, repo string
+		if r.FetchURL != nil {
+			owner, repo, _ = fromURL(sshTranslate(r.FetchURL))
+		}
+		if (owner == "" || repo == "") && r.PushURL != nil {
+			owner, repo, _ = fromURL(sshTranslate(r.PushURL))
+		}
+		remotes = append(remotes, &context.Remote{
+			Remote: r,
+			Owner:  owner,
+			Repo:   repo,
+		})
+	}
+
+	repoContext, err := context.ResolveRemotesToRepos(remotes, client, "")
+	if err != nil {
+		return nil, err
+	}
+
+	baseRepo, err := repoContext.BaseRepo()
+	if err != nil {
+		return nil, err
+	}
+
+	return &Completer{
+		client:  client,
+		remotes: remotes,
+		repo:    baseRepo,
+	}, nil
+}
+
+func (c *Completer) Complete(d prompt.Document) []prompt.Suggest {
 	if d.TextBeforeCursor() == "" {
 		return []prompt.Suggest{}
 	}
@@ -53,6 +103,20 @@ func Completer(d prompt.Document) []prompt.Suggest {
 
 	repo := checkRepoArg(d)
 	return argumentsCompleter(repo, commandArgs)
+
+}
+
+func parseArgs(t string) []string {
+	splits := strings.Split(t, " ")
+	args := make([]string, 0, len(splits))
+
+	for i := range splits {
+		if i != len(splits)-1 && splits[i] == "" {
+			continue
+		}
+		args = append(args, splits[i])
+	}
+	return args
 }
 
 func checkRepoArg(d prompt.Document) string {

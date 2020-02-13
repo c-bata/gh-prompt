@@ -21,8 +21,8 @@ test:  ## Run the tests.
 	@$(GO) test ./...
 
 .PHONY: build
-build: main.go  ## Build a binary.
-	$(GO) build -ldflags "$(LDFLAGS)"
+build: ## Build a binary.
+	$(GO) build -o gh-prompt -ldflags "$(LDFLAGS)" ./cmd/gh-prompt/main.go
 
 .PHONY: help
 help: ## Show help text
