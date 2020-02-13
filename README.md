@@ -57,23 +57,6 @@ sudo mv ./gh-prompt /usr/local/bin/gh-prompt
 
 </details>
 
-
-### Goal
-
-Hopefully support following commands enough.
-
-* [x] issue
-    * [x] create
-    * [x] list
-    * [x] status
-    * [x] view
-* [x] pr
-    * [x] checkout
-    * [x] create
-    * [x] list
-    * [x] status
-    * [x] view
-
 ## LICENSE
 
 This software is licensed under the MIT License (See [LICENSE](./LICENSE)).

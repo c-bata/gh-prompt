@@ -1,6 +1,9 @@
 package completer
 
 import (
+	"fmt"
+
+	"github.com/c-bata/gh-prompt/internal/debug"
 	"github.com/c-bata/go-prompt"
 )
 
@@ -21,6 +24,7 @@ func (c *Completer) argumentsCompleter(repo string, args []string) []prompt.Sugg
 
 	switch args[0] {
 	case "issue":
+		debug.Log(fmt.Sprintf("here! %#v", args))
 		if len(args) == 2 {
 			return prompt.FilterHasPrefix(
 				[]prompt.Suggest{
@@ -59,7 +63,8 @@ func (c *Completer) argumentsCompleter(repo string, args []string) []prompt.Sugg
 		if args[1] == "view" && len(args) == 3 {
 			suggests := getPullRequestsNumberSuggestions(c.client, c.repo)
 			suggests = append(suggests, getPullRequestsBranchSuggestions(c.client, c.repo)...)
-			suggests = append(suggests, getPullRequestsURLSuggestions(c.client, c.repo)...)
+			// This makes 'Text' section of completion window too long.
+			// suggests = append(suggests, getPullRequestsURLSuggestions(c.client, c.repo)...)
 			return prompt.FilterHasPrefix(
 				suggests,
 				args[2],

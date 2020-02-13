@@ -127,7 +127,6 @@ func (c *Completer) completeOptionArguments(d prompt.Document) ([]prompt.Suggest
 
 	// repository
 	if option == "-R" || option == "--repo" {
-		// TODO(c-bata): implement repository name from past execution logs.
 		return prompt.FilterHasPrefix(
 			[]prompt.Suggest{},
 			d.GetWordBeforeCursor(),
@@ -135,32 +134,79 @@ func (c *Completer) completeOptionArguments(d prompt.Document) ([]prompt.Suggest
 		), true
 	}
 
-	if len(cmds) == 2 && cmds[0] == "pr" && cmds[1] == "list" {
-		if option == "-s" || option == "--state" {
-			return prompt.FilterHasPrefix(
-				[]prompt.Suggest{
-					{Text: "open"},
-					{Text: "closed"},
-					{Text: "merged"},
-					{Text: "all"},
-				},
-				d.GetWordBeforeCursor(),
-				true,
-			), true
+	switch cmds[0] {
+	case "issue":
+		if len(cmds) < 2 {
+			return []prompt.Suggest{}, false
 		}
-	}
 
-	if len(cmds) == 2 && cmds[0] == "issue" && cmds[1] == "list" {
-		if option == "-s" || option == "--state" {
-			return prompt.FilterHasPrefix(
-				[]prompt.Suggest{
-					{Text: "open"},
-					{Text: "closed"},
-					{Text: "all"},
-				},
-				d.GetWordBeforeCursor(),
-				true,
-			), true
+		switch cmds[1] {
+		case "create":
+			switch option {
+			case "-b", "--body":
+				return []prompt.Suggest{}, true
+			case "-t", "--title":
+				return []prompt.Suggest{}, true
+			}
+		case "list":
+			switch option {
+			case "-a", "--assignee":
+				return []prompt.Suggest{}, true
+			case "-l", "--label":
+				// TODO(c-bata): complete label
+				return []prompt.Suggest{}, true
+			case "-L", "--limit":
+				return []prompt.Suggest{}, true
+			case "-s", "--state":
+				return prompt.FilterHasPrefix(
+					[]prompt.Suggest{
+						{Text: "open"},
+						{Text: "closed"},
+						{Text: "all"},
+					},
+					d.GetWordBeforeCursor(),
+					true,
+				), true
+			}
+		}
+	case "pr":
+		if len(cmds) < 2 {
+			return []prompt.Suggest{}, false
+		}
+
+		switch cmds[1] {
+		case "create":
+			switch option {
+			case "-B", "--base":
+				return []prompt.Suggest{}, true
+			case "-b", "--body":
+				return []prompt.Suggest{}, true
+			case "-t", "--title":
+				return []prompt.Suggest{}, true
+			}
+		case "list":
+			switch option {
+			case "-a", "--assignee":
+				return []prompt.Suggest{}, true
+			case "-B", "--base":
+				return []prompt.Suggest{}, true
+			case "-l", "--label":
+				// TODO(c-bata): complete label
+				return []prompt.Suggest{}, true
+			case "-L", "--limit":
+				return []prompt.Suggest{}, true
+			case "-s", "--state":
+				return prompt.FilterHasPrefix(
+					[]prompt.Suggest{
+						{Text: "open"},
+						{Text: "closed"},
+						{Text: "merged"},
+						{Text: "all"},
+					},
+					d.GetWordBeforeCursor(),
+					true,
+				), true
+			}
 		}
 	}
 
