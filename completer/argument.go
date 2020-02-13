@@ -73,6 +73,17 @@ func (c *Completer) argumentsCompleter(repo string, args []string) []prompt.Sugg
 				true,
 			)
 		}
+		if args[1] == "checkout" && len(args) == 3 {
+			suggests := getPullRequestsNumberSuggestions(c.client, c.repo)
+			suggests = append(suggests, getPullRequestsBranchSuggestions(c.client, c.repo)...)
+			// This makes 'Text' section of completion window too long.
+			// suggests = append(suggests, getPullRequestsURLSuggestions(c.client, c.repo)...)
+			return prompt.FilterHasPrefix(
+				suggests,
+				args[2],
+				true,
+			)
+		}
 	}
 	return []prompt.Suggest{}
 }
