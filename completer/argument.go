@@ -40,8 +40,8 @@ func (c *Completer) argumentsCompleter(repo string, args []string) []prompt.Sugg
 			)
 		}
 		if args[1] == "view" && len(args) == 3 {
-			suggests := getIssueNumberSuggestions(c.client, c.repo)
-			suggests = append(suggests, getIssueURLSuggestions(c.client, c.repo)...)
+			suggests := getIssueNumberSuggestions(c, repo)
+			suggests = append(suggests, getIssueURLSuggestions(c, repo)...)
 			return prompt.FilterHasPrefix(
 				suggests,
 				args[2],
@@ -63,10 +63,10 @@ func (c *Completer) argumentsCompleter(repo string, args []string) []prompt.Sugg
 			)
 		}
 		if args[1] == "view" && len(args) == 3 {
-			suggests := getPullRequestsNumberSuggestions(c.client, c.repo)
-			suggests = append(suggests, getPullRequestsBranchSuggestions(c.client, c.repo)...)
+			suggests := getPullRequestsNumberSuggestions(c, repo)
+			suggests = append(suggests, getPullRequestsBranchSuggestions(c, repo)...)
 			// This makes 'Text' section of completion window too long.
-			// suggests = append(suggests, getPullRequestsURLSuggestions(c.client, c.repo)...)
+			// suggests = append(suggests, getPullRequestsURLSuggestions(c, repo)...)
 			return prompt.FilterHasPrefix(
 				suggests,
 				args[2],
@@ -74,10 +74,10 @@ func (c *Completer) argumentsCompleter(repo string, args []string) []prompt.Sugg
 			)
 		}
 		if args[1] == "checkout" && len(args) == 3 {
-			suggests := getPullRequestsNumberSuggestions(c.client, c.repo)
-			suggests = append(suggests, getPullRequestsBranchSuggestions(c.client, c.repo)...)
+			suggests := getPullRequestsNumberSuggestions(c, repo)
+			suggests = append(suggests, getPullRequestsBranchSuggestions(c, repo)...)
 			// This makes 'Text' section of completion window too long.
-			// suggests = append(suggests, getPullRequestsURLSuggestions(c.client, c.repo)...)
+			// suggests = append(suggests, getPullRequestsURLSuggestions(c, repo)...)
 			return prompt.FilterHasPrefix(
 				suggests,
 				args[2],

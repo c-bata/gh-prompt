@@ -8,6 +8,7 @@ import (
 	"github.com/c-bata/gh-prompt/internal/debug"
 	"github.com/c-bata/go-prompt"
 	"github.com/cli/cli/api"
+	"github.com/cli/cli/context"
 )
 
 const (
@@ -20,13 +21,46 @@ var (
 	issueCache       *sync.Map
 	pullRequestCache *sync.Map
 	lastFetchedAt    *sync.Map
+	repoCache        *sync.Map
 )
 
 func init() {
 	issueCache = new(sync.Map)
 	pullRequestCache = new(sync.Map)
 	lastFetchedAt = new(sync.Map)
+	repoCache = new(sync.Map)
 }
+
+// client
+
+func currentRepo(ctx *Completer, argRepo string) *api.Repository {
+	if argRepo == "" {
+		return ctx.repo
+	}
+
+	// check cache
+	if cached, ok := repoCache.Load(argRepo); ok {
+		return cached.(*api.Repository)
+	}
+
+	// load repo
+	repoCtx, err := context.ResolveRemotesToRepos(ctx.remotes, ctx.client, argRepo)
+	if err != nil {
+		debug.Log(fmt.Sprintf("err: %s", err))
+		return ctx.repo
+	}
+
+	repoOverride, err := repoCtx.BaseRepo()
+	if err != nil {
+		debug.Log(fmt.Sprintf("err: %s", err))
+		return ctx.repo
+	}
+	// cache repo
+	repoCache.Store(argRepo, repoOverride)
+	return repoOverride
+}
+
+// expire
 
 func shouldFetch(key string) bool {
 	v, ok := lastFetchedAt.Load(key)
@@ -73,9 +107,10 @@ func getIssueCache(key string) (issues []api.Issue, ok bool) {
 	return issues, true
 }
 
-func getIssueNumberSuggestions(client *api.Client, repo *api.Repository) []prompt.Suggest {
+func getIssueNumberSuggestions(ctx *Completer, argRepo string) []prompt.Suggest {
+	repo := currentRepo(ctx, argRepo)
 	cacheKey := fmt.Sprintf("get_issues:%s:%s", repo.RepoOwner(), repo.RepoName())
-	go fetchIssuesIfExpired(cacheKey, client, repo)
+	go fetchIssuesIfExpired(cacheKey, ctx.client, repo)
 
 	issues, ok := getIssueCache(cacheKey)
 	if !ok {
@@ -92,9 +127,10 @@ func getIssueNumberSuggestions(client *api.Client, repo *api.Repository) []promp
 	return s
 }
 
-func getIssueURLSuggestions(client *api.Client, repo *api.Repository) []prompt.Suggest {
+func getIssueURLSuggestions(ctx *Completer, argRepo string) []prompt.Suggest {
+	repo := currentRepo(ctx, argRepo)
 	cacheKey := fmt.Sprintf("get_issues:%s:%s", repo.RepoOwner(), repo.RepoName())
-	go fetchIssuesIfExpired(cacheKey, client, repo)
+	go fetchIssuesIfExpired(cacheKey, ctx.client, repo)
 
 	issues, ok := getIssueCache(cacheKey)
 	if !ok {
@@ -145,9 +181,10 @@ func getPullRequestCache(key string) (pulls []api.PullRequest, ok bool) {
 	return pulls, true
 }
 
-func getPullRequestsNumberSuggestions(client *api.Client, repo *api.Repository) []prompt.Suggest {
+func getPullRequestsNumberSuggestions(ctx *Completer, argRepo string) []prompt.Suggest {
+	repo := currentRepo(ctx, argRepo)
 	cacheKey := fmt.Sprintf("get_pulls:%s:%s", repo.RepoOwner(), repo.RepoName())
-	go fetchPullRequestsIfExpired(cacheKey, client, repo)
+	go fetchPullRequestsIfExpired(cacheKey, ctx.client, repo)
 
 	pulls, ok := getPullRequestCache(cacheKey)
 	if !ok {
@@ -164,9 +201,10 @@ func getPullRequestsNumberSuggestions(client *api.Client, repo *api.Repository) 
 	return s
 }
 
-func getPullRequestsBranchSuggestions(client *api.Client, repo *api.Repository) []prompt.Suggest {
+func getPullRequestsBranchSuggestions(ctx *Completer, argRepo string) []prompt.Suggest {
+	repo := currentRepo(ctx, argRepo)
 	cacheKey := fmt.Sprintf("get_pulls:%s:%s", repo.RepoOwner(), repo.RepoName())
-	go fetchPullRequestsIfExpired(cacheKey, client, repo)
+	go fetchPullRequestsIfExpired(cacheKey, ctx.client, repo)
 
 	pulls, ok := getPullRequestCache(cacheKey)
 	if !ok {
@@ -183,9 +221,10 @@ func getPullRequestsBranchSuggestions(client *api.Client, repo *api.Repository) 
 	return s
 }
 
-func getPullRequestsURLSuggestions(client *api.Client, repo *api.Repository) []prompt.Suggest {
+func getPullRequestsURLSuggestions(ctx *Completer, argRepo string) []prompt.Suggest {
+	repo := currentRepo(ctx, argRepo)
 	cacheKey := fmt.Sprintf("get_pulls:%s:%s", repo.RepoOwner(), repo.RepoName())
-	go fetchPullRequestsIfExpired(cacheKey, client, repo)
+	go fetchPullRequestsIfExpired(cacheKey, ctx.client, repo)
 
 	pulls, ok := getPullRequestCache(cacheKey)
 	if !ok {
