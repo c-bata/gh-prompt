@@ -5,11 +5,11 @@
 
 
 An interactive GitHub CLI featuring auto-complete. This tool provides powerful completion to GitHub's official CLI.
-See https://cli.github.com/ for details.
 
 [![GIF animation](https://github.com/c-bata/assets/raw/master/gh-prompt/gh-prompt.gif)](#)
 
 You can walk through issues, create pull requests, checkout pull requests locally, and more.
+See https://cli.github.com/ for details.
 
 ## Installation
 
