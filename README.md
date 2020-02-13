@@ -1,10 +1,23 @@
 # gh-prompt
 
-An interactive GitHub CLI based on https://cli.github.com/.
+![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)
+[![GoDoc](https://godoc.org/github.com/c-bata/gh-prompt?status.svg)](https://godoc.org/github.com/c-bata/gh-prompt)
 
-![GIF animation](https://github.com/c-bata/assets/raw/master/gh-prompt/gh-prompt.gif)
+
+An interactive GitHub CLI featuring auto-complete. This tool provides powerful completion to GitHub's official CLI.
+See https://cli.github.com/ for details.
+
+[![GIF animation](https://github.com/c-bata/assets/raw/master/gh-prompt/gh-prompt.gif)](#)
+
+You can walk through issues, create pull requests, checkout pull requests locally, and more.
 
 ## Installation
+
+### Homebrew (for macOS users)
+
+```
+$ brew install c-bata/gh-prompt/gh-prompt
+```
 
 ### Downloading standalone binary
 
@@ -46,6 +59,20 @@ sudo mv ./gh-prompt /usr/local/bin/gh-prompt
 ```
 
 </details>
+
+### Building from source
+
+```
+$ git clone git@github.com:c-bata/gh-prompt.git
+$ cd gh-prompt
+$ make build
+```
+
+You can create multi-platform binaries via goreleaser:
+
+```
+$ goreleaser --snapshot --skip-publish --rm-dist
+```
 
 ## LICENSE
 
