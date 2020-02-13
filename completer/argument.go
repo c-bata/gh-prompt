@@ -7,16 +7,18 @@ import (
 	"github.com/c-bata/go-prompt"
 )
 
+var commands = []prompt.Suggest{
+	{Text: "help", Description: "Help about any command"},
+	{Text: "pr", Description: "Create, view, and checkout pull requests"},
+	{Text: "issue", Description: "Create and view issues"},
+	// Custom commands.
+	{Text: "exit", Description: "Exit this program"},
+}
+
 func (c *Completer) argumentsCompleter(repo string, args []string) []prompt.Suggest {
 	if len(args) <= 1 {
 		return prompt.FilterHasPrefix(
-			[]prompt.Suggest{
-				{Text: "help", Description: "Help about any command"},
-				{Text: "pr", Description: "Create, view, and checkout pull requests"},
-				{Text: "issue", Description: "Create and view issues"},
-				// Custom commands.
-				{Text: "exit", Description: "Exit this program"},
-			},
+			commands,
 			args[0],
 			true,
 		)

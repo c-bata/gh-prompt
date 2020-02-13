@@ -77,7 +77,7 @@ func NewCompleter(version string) (*Completer, error) {
 
 func (c *Completer) Complete(d prompt.Document) []prompt.Suggest {
 	if d.TextBeforeCursor() == "" {
-		return []prompt.Suggest{}
+		return prompt.FilterHasPrefix(commands, d.GetWordBeforeCursor(), true)
 	}
 
 	args := parseArgs(d.TextBeforeCursor())
