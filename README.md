@@ -14,8 +14,8 @@ Binaries are available from [github release](https://github.com/c-bata/gh-prompt
 <summary>macOS (darwin) - amd64</summary>
 
 ```
-wget https://github.com/c-bata/gh-prompt/releases/download/v0.0.1/gh-prompt_v0.0.1_darwin_amd64.zip
-unzip gh-prompt_v0.0.1_darwin_amd64.zip
+wget https://github.com/c-bata/gh-prompt/releases/download/v0.0.1/gh-prompt_darwin_x86_64.zip
+unzip gh-prompt_darwin_x86_64.zip
 chmod +x gh-prompt
 sudo mv ./gh-prompt /usr/local/bin/gh-prompt
 ```
@@ -26,8 +26,8 @@ sudo mv ./gh-prompt /usr/local/bin/gh-prompt
 <summary>Linux - amd64</summary>
 
 ```
-wget https://github.com/c-bata/gh-prompt/releases/download/v0.0.1/gh-prompt_v0.0.1_linux_amd64.zip
-unzip gh-prompt_v0.0.1_linux_amd64.zip
+wget https://github.com/c-bata/gh-prompt/releases/download/v0.0.1/gh-prompt_linux_x86_64.zip
+unzip gh-prompt_linux_x86_64.zip
 chmod +x gh-prompt
 sudo mv ./gh-prompt /usr/local/bin/gh-prompt
 ```
@@ -39,20 +39,8 @@ sudo mv ./gh-prompt /usr/local/bin/gh-prompt
 <summary>Linux - i386</summary>
 
 ```
-wget https://github.com/c-bata/gh-prompt/releases/download/v0.0.1/gh-prompt_v0.0.1_linux_386.zip
-unzip gh-prompt_v0.0.1_linux_386.zip
-chmod +x gh-prompt
-sudo mv ./gh-prompt /usr/local/bin/gh-prompt
-```
-
-</details>
-
-<details>
-<summary>Linux - arm64</summary>
-
-```
-wget https://github.com/c-bata/gh-prompt/releases/download/v0.0.1/gh-prompt_v0.0.1_linux_arm64.zip
-unzip gh-prompt_v0.0.1_linux_arm64.zip
+wget https://github.com/c-bata/gh-prompt/releases/download/v0.0.1/gh-prompt_linux_i386.zip
+unzip gh-prompt_linux_i386.zip
 chmod +x gh-prompt
 sudo mv ./gh-prompt /usr/local/bin/gh-prompt
 ```

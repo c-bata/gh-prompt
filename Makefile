@@ -4,6 +4,7 @@ LDFLAGS := -X 'main.Version=$(VERSION)' \
            -X 'main.Revision=$(REVISION)'
 GOIMPORTS ?= goimports
 GOCILINT ?= golangci-lint
+GORELEASER ?= goreleaser
 GO ?= GO111MODULE=on go
 
 .DEFAULT_GOAL := help
@@ -23,6 +24,11 @@ test:  ## Run the tests.
 .PHONY: build
 build: ## Build a binary.
 	$(GO) build -o gh-prompt -ldflags "$(LDFLAGS)" ./cmd/gh-prompt/main.go
+
+
+.PHONY: cross
+cross: ## Cross build using goreleaser.
+	$(GORELEASER) --snapshot --skip-publish --rm-dist
 
 .PHONY: help
 help: ## Show help text
