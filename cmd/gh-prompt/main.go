@@ -46,8 +46,12 @@ func main() {
 	defer debug.Teardown()
 
 	c, err := completer.NewCompleter(Version)
-	if err != nil {
-		_, _ = fmt.Fprintln(os.Stderr, "Please use `exit` or `Ctrl-D` to exit this program.")
+	if err == completer.ErrNotFoundRemotes {
+		_, _ = fmt.Fprintf(os.Stderr, "Failed to get remote informations on your git directory.\n")
+		os.Exit(1)
+	} else if err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "Initialization error: %s\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "You current directory might not be a git repository.")
 		os.Exit(1)
 	}
 	p := prompt.New(

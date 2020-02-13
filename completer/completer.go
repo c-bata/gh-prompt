@@ -1,6 +1,7 @@
 package completer
 
 import (
+	"errors"
 	"fmt"
 	"net/url"
 	"strings"
@@ -10,6 +11,8 @@ import (
 	"github.com/cli/cli/context"
 	"github.com/cli/cli/git"
 )
+
+var ErrNotFoundRemotes = errors.New("git remotes are not found on your current directory")
 
 type Completer struct {
 	client  *api.Client
@@ -34,6 +37,9 @@ func NewCompleter(version string) (*Completer, error) {
 	gitRemotes, err := git.Remotes()
 	if err != nil {
 		return nil, err
+	}
+	if len(gitRemotes) == 0 {
+		return nil, ErrNotFoundRemotes
 	}
 	remotes := make(context.Remotes, 0, len(gitRemotes))
 	sshTranslate := git.ParseSSHConfig().Translator()
@@ -86,11 +92,11 @@ func (c *Completer) Complete(d prompt.Document) []prompt.Suggest {
 
 	// If word before the cursor starts with "-", returns CLI flag options.
 	if strings.HasPrefix(w, "-") {
-		return optionCompleter(args, w)
+		return c.optionCompleter(args, w)
 	}
 
 	// Return suggestions for option
-	if suggests, found := completeOptionArguments(d); found {
+	if suggests, found := c.completeOptionArguments(d); found {
 		return suggests
 	}
 
@@ -102,7 +108,7 @@ func (c *Completer) Complete(d prompt.Document) []prompt.Suggest {
 	}
 
 	repo := checkRepoArg(d)
-	return argumentsCompleter(repo, commandArgs)
+	return c.argumentsCompleter(repo, commandArgs)
 
 }
 

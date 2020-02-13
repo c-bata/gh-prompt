@@ -12,7 +12,7 @@ var globalOptions = []prompt.Suggest{
 	{Text: "--help", Description: "Show help for command"},
 }
 
-func optionCompleter(args []string, word string) []prompt.Suggest {
+func (c *Completer) optionCompleter(args []string, word string) []prompt.Suggest {
 	l := len(args)
 	long := strings.HasPrefix(word, "--")
 	if l <= 2 {
@@ -119,7 +119,7 @@ func getPreviousOption(d prompt.Document) (cmds []string, option string, found b
 	return nil, "", false
 }
 
-func completeOptionArguments(d prompt.Document) ([]prompt.Suggest, bool) {
+func (c *Completer) completeOptionArguments(d prompt.Document) ([]prompt.Suggest, bool) {
 	cmds, option, found := getPreviousOption(d)
 	if !found {
 		return []prompt.Suggest{}, false

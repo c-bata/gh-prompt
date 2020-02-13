@@ -1,15 +1,10 @@
 package completer
 
 import (
-	"fmt"
-
-	"github.com/c-bata/gh-prompt/internal/debug"
 	"github.com/c-bata/go-prompt"
 )
 
-func argumentsCompleter(repo string, args []string) []prompt.Suggest {
-	debug.Log(fmt.Sprintf("repo: %s, args %#v", repo, args))
-
+func (c *Completer) argumentsCompleter(repo string, args []string) []prompt.Suggest {
 	if len(args) <= 1 {
 		return prompt.FilterHasPrefix(
 			[]prompt.Suggest{
@@ -38,7 +33,15 @@ func argumentsCompleter(repo string, args []string) []prompt.Suggest {
 				true,
 			)
 		}
-		// TODO(c-bata): gh issue view {<number> | <url> | <branch>} [flags]
+		if args[1] == "view" && len(args) == 3 {
+			suggests := getIssueNumberSuggestions(c.client, c.repo)
+			suggests = append(suggests, getIssueURLSuggestions(c.client, c.repo)...)
+			return prompt.FilterHasPrefix(
+				suggests,
+				args[2],
+				true,
+			)
+		}
 	case "pr":
 		if len(args) == 2 {
 			return prompt.FilterHasPrefix(
@@ -53,7 +56,16 @@ func argumentsCompleter(repo string, args []string) []prompt.Suggest {
 				true,
 			)
 		}
-		// TODO(c-bata): gh pr view [{<number> | <url> | <branch>}] [flags]
+		if args[1] == "view" && len(args) == 3 {
+			suggests := getPullRequestsNumberSuggestions(c.client, c.repo)
+			suggests = append(suggests, getPullRequestsBranchSuggestions(c.client, c.repo)...)
+			suggests = append(suggests, getPullRequestsURLSuggestions(c.client, c.repo)...)
+			return prompt.FilterHasPrefix(
+				suggests,
+				args[2],
+				true,
+			)
+		}
 	}
 	return []prompt.Suggest{}
 }
