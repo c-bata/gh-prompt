@@ -1,0 +1,28 @@
+name: Run lint checks
+on:
+  pull_request:
+    branches:
+      - master
+jobs:
+  lint:
+    name: Lint checking on Ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Go 1.13
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.13
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@master
+
+      - name: Running golangci-lint
+        env:
+          GO111MODULE: on
+          GOPATH: /home/runner/work/
+        run: |
+          wget https://github.com/golangci/golangci-lint/releases/download/v1.20.1/golangci-lint-1.20.1-linux-amd64.tar.gz
+          tar -xvf ./golangci-lint-1.20.1-linux-amd64.tar.gz
+          GOCILINT=./golangci-lint-1.20.1-linux-amd64/golangci-lint make lint
