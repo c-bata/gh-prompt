@@ -87,7 +87,7 @@ func fetchIssuesIfExpired(key string, client *api.Client, repo *api.Repository) 
 	updateLastFetchedAt(key)
 
 	debug.Log("Call a request to fetch issues.")
-	issues, err := api.IssueList(client, repo, "all", nil, "", issueLimits)
+	issues, err := api.IssueList(client, repo, "open", nil, "", issueLimits)
 	if err != nil {
 		debug.Log(err.Error())
 	}
@@ -156,7 +156,7 @@ func fetchPullRequestsIfExpired(key string, client *api.Client, repo *api.Reposi
 	params := map[string]interface{}{
 		"owner": repo.RepoOwner(),
 		"repo":  repo.RepoName(),
-		"state": []string{"OPEN", "CLOSED", "MERGED"},
+		"state": []string{"OPEN"},
 	}
 	updateLastFetchedAt(key)
 
