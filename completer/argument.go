@@ -10,6 +10,7 @@ import (
 var commands = []prompt.Suggest{
 	{Text: "help", Description: "Help about any command"},
 	{Text: "pr", Description: "Create, view, and checkout pull requests"},
+	{Text: "repo", Description: "Create, clone, fork, and view repositories"},
 	{Text: "issue", Description: "Create and view issues"},
 	// Custom commands.
 	{Text: "exit", Description: "Exit this program"},
@@ -81,6 +82,19 @@ func (c *Completer) argumentsCompleter(repo string, args []string) []prompt.Sugg
 			return prompt.FilterHasPrefix(
 				suggests,
 				args[2],
+				true,
+			)
+		}
+	case "repo":
+		if len(args) == 2 {
+			return prompt.FilterHasPrefix(
+				[]prompt.Suggest{
+					{Text: "clone", Description: "Clone a repository locally"},
+					{Text: "create", Description: "Create a new repository"},
+					{Text: "fork", Description: "Create a fork of a repository."},
+					{Text: "view", Description: "View a repository in the browser."},
+				},
+				args[1],
 				true,
 			)
 		}

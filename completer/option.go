@@ -90,6 +90,28 @@ func (c *Completer) optionCompleter(args []string, word string) []prompt.Suggest
 				{Text: "--preview", Description: "Display preview of pull request content"},
 			}
 		}
+	case "repo":
+		switch commandArgs[1] {
+		case "clone":
+			suggests = []prompt.Suggest{}
+		case "create":
+			suggests = []prompt.Suggest{
+				{Text: "-d", Description: "Description of repository"},
+				{Text: "--description", Description: "Description of repository"},
+				{Text: "--enable-issues", Description: "Enable issues in the new repository (default true)"},
+				{Text: "--enable-wiki", Description: "Enable wiki in the new repository (default true)"},
+				{Text: "-h", Description: "Repository home page URL"},
+				{Text: "--homepage", Description: "Repository home page URL"},
+				{Text: "--public", Description: "Make the new repository public"},
+				{Text: "-t", Description: "The name of the organization team to be granted access"},
+				{Text: "--team", Description: "The name of the organization team to be granted access"},
+			}
+		case "fork":
+			suggests = []prompt.Suggest{
+				{Text: "--clone", Description: "Clone fork: {true|false|prompt} (default 'prompt')"},
+				{Text: "--remote", Description: "Add remote for fork: {true|false|prompt} (default 'prompt')"},
+			}
+		}
 	default:
 		suggests = []prompt.Suggest{}
 	}
@@ -208,6 +230,28 @@ func (c *Completer) completeOptionArguments(d prompt.Document) ([]prompt.Suggest
 				), true
 			}
 		}
+	case "repo":
+		if len(cmds) < 2 {
+			return []prompt.Suggest{}, false
+		}
+
+		switch cmds[1] {
+		case "fork":
+			switch option {
+			case "--clone":
+				return []prompt.Suggest{
+					{Text: "true"},
+					{Text: "false"},
+					{Text: "prompt"},
+				}, true
+			case "--remote":
+				return []prompt.Suggest{
+					{Text: "true"},
+					{Text: "false"},
+					{Text: "prompt"},
+				}, true
+			}
+		}
 	}
 
 	return []prompt.Suggest{}, false
@@ -218,17 +262,12 @@ func excludeOptions(args []string) ([]string, bool) {
 	if l == 0 {
 		return nil, false
 	}
-	cmd := args[0]
 	filtered := make([]string, 0, l)
 
 	var skipNextArg bool
 	for i := 0; i < len(args); i++ {
 		if skipNextArg {
 			skipNextArg = false
-			continue
-		}
-
-		if cmd == "logs" && args[i] == "-f" {
 			continue
 		}
 
@@ -240,6 +279,14 @@ func excludeOptions(args []string) ([]string, bool) {
 			"-L", "--limit",
 			"-s", "--state",
 			"-B", "--base",
+			"-R", "--repo",
+			"-d", "--description",
+			"--enable-issues",
+			"--enable-wiki",
+			"--homepage",
+			"-t", "--team",
+			"--clone",
+			"--remote",
 		} {
 			if strings.HasPrefix(args[i], s) {
 				if strings.Contains(args[i], "=") {
