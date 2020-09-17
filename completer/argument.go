@@ -8,10 +8,17 @@ import (
 )
 
 var commands = []prompt.Suggest{
-	{Text: "help", Description: "Help about any command"},
-	{Text: "pr", Description: "Create, view, and checkout pull requests"},
+	{Text: "gist", Description: "Create gists"},
+	{Text: "issue", Description: "Manage issues"},
+	{Text: "pr", Description: "Manage pull requests"},
+	{Text: "release", Description: "Manage GitHub releases"},
 	{Text: "repo", Description: "Create, clone, fork, and view repositories"},
-	{Text: "issue", Description: "Create and view issues"},
+	{Text: "alias", Description: "Create command shortcuts"},
+	{Text: "api", Description: "Make an authenticated GitHub API request"},
+	{Text: "auth", Description: "Login, logout, and refresh your authentication"},
+	{Text: "completion", Description: "Generate shell completion scripts"},
+	{Text: "config", Description: "Manage configuration for gh"},
+	{Text: "help", Description: "Help about any command"},
 	// Custom commands.
 	{Text: "exit", Description: "Exit this program"},
 }
